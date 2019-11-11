@@ -6,4 +6,15 @@ module.exports = {
   // static: {
   //   enable: true,
   // }
+  cache = {
+    enable: true,
+    package: 'egg-cache',
+  }
+  
 };
+
+
+// exports.cache = {
+//   enable: true,
+//   package: 'egg-cache',
+// };

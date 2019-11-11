@@ -23,8 +23,20 @@ module.exports = appInfo => {
     // myAppName: 'egg',
   };
 
+  const cache = {
+    default: 'memory',
+    stores: {
+      memory: {
+        driver: 'memory',
+        max: 100,
+        ttl: 0,
+      },
+    },
+  };
+
   return {
     ...config,
     ...userConfig,
+    ...cache,
   };
 };
