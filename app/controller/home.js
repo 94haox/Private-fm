@@ -15,10 +15,18 @@ class HomeController extends Controller {
   async parserRss() {
     let url = this.ctx.request.query['url']
     try {
+      let hasCache = await this.app.cache.has(url)
+      if (hasCache) {
+        let cacheRssObj = await this.app.cache.get(url)
+        this.success(cacheRssObj)
+        return;
+      }
       let feed = await parser.parseURL(url);
       feed = this.ensureSortLatest(feed)
+      this.app.cache.set(url, feed, 300)
       this.success(feed)
     } catch (error) {
+      console.error('parser-error', error)
       this.error('could not parser')
     }
   }
