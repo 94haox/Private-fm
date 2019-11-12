@@ -7,11 +7,14 @@
     "declarations": true
   },
   "dependencies": {
+    "0s": "^1.0.0",
     "egg": "^2.15.1",
     "egg-cache": "0.0.6",
     "egg-scripts": "^2.11.0",
     "moment": "^2.24.0",
-    "rss-parser": "^3.7.3"
+    "request": "^2.88.0",
+    "rss-parser": "^3.7.3",
+    "xml2js": "^0.4.22"
   },
   "devDependencies": {
     "autod": "^3.0.1",

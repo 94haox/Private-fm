@@ -34,6 +34,12 @@ module.exports = appInfo => {
     },
   };
 
+  exports.security = {
+    xframe: {
+      enable: false,
+    },
+  };
+
   return {
     ...config,
     ...userConfig,
