@@ -5,7 +5,7 @@ var util = require('util')
 let moment = require('moment')
 let xml2js = require('xml2js')
 let request = require('request')
-
+let superAgent = require('superagent')
 
 const Controller = require('egg').Controller;
 
@@ -14,20 +14,49 @@ class HomeController extends Controller {
   async parserRss() {
     let url = this.ctx.request.query['url']
     try {
-      let hasCache = await this.app.cache.has(url)
-      if (hasCache) {
-        let cacheRssObj = await this.app.cache.get(url)
-        this.success(cacheRssObj)
-        return;
+      let podcast = await this.parserWithRequest(url)
+      if(podcast.episodes == null){
+        this.error('podcast can not parser')
+        return
       }
-      let feed = await parser.parseURL(url);
-      feed = this.ensureSortLatest(feed)
-      this.app.cache.set(url, feed, 300)
-      this.success(feed)
+      this.success(podcast)
     } catch (error) {
-      console.error('parser-error', error)
-      this.error('could not parser')
+      try {
+        let feed = await parser.parseURL(url);
+        feed = this.ensureSortLatest(feed)
+        this.success(feed)
+      } catch (error) {
+        this.error('podcast can not parser')
+      }
     }
+  }
+
+  async parserWithRequest(url){
+    let params = {
+      url: url,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:45.0) Gecko/20100101 Firefox/45.0',
+        accept: 'text/html,application/xhtml+xml'
+      },
+      followRedirect: true,
+      timeout:15000
+    }
+    let that = this
+    let result = await new Promise(function (resolve, reject) {
+        request(params, function (error, response, xml) {
+          if (!util.isNullOrUndefined(xml)) {
+            parser.parseString(xml).then(res=>{
+              resolve(that.ensureSortLatest(res))
+            })
+          } else {
+            reject(error)
+          }
+        });
+      })
+      .catch((err) => {
+        return err
+      })
+      return result
   }
 
   ensureSortLatest(podcast){
