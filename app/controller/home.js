@@ -3,9 +3,7 @@ let ParserKit = require('rss-parser');
 let parser = new ParserKit();
 var util = require('util')
 let moment = require('moment')
-let xml2js = require('xml2js')
 let request = require('request')
-let superAgent = require('superagent')
 
 const Controller = require('egg').Controller;
 
