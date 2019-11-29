@@ -27,7 +27,7 @@ class HomeController extends Controller {
     try {
       let podcast = await this.parserWithRequest(url)
       if(podcast.items == null){
-        this.error('podcast can not parser')
+        this.error('podcast can not parser', 10001)
         return
       }
       this.success(podcast)
@@ -37,7 +37,7 @@ class HomeController extends Controller {
         feed = this.ensureSortLatest(feed)
         this.success(feed)
       } catch (error) {
-        this.error('podcast can not parser')
+        this.error('podcast can not parser', 10001)
       }
     }
   }
@@ -95,7 +95,7 @@ class HomeController extends Controller {
      }
    }
 
-   error(msg, code = 1) {
+   error(msg, code) {
      this.ctx.body = {
        result: 1,
        data: {},
