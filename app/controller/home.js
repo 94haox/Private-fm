@@ -8,7 +8,6 @@ let parser = new ParserKit({
   xml2js: {
       trim: false,
       normalize: true,
-      mergeAttrs: true
     },
   defaultRSS: 2.0
 });
