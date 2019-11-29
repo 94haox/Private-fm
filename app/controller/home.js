@@ -1,6 +1,19 @@
 'use strict';
 let ParserKit = require('rss-parser');
-let parser = new ParserKit();
+let parser = new ParserKit({
+  headers: {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:45.0) Gecko/20100101 Firefox/45.0',
+  },
+  maxRedirects: 100,
+  xml2js: {
+      trim: false,
+      normalize: true,
+      mergeAttrs: true
+    },
+  defaultRSS: 2.0
+});
+
+
 var util = require('util')
 let moment = require('moment')
 let request = require('request')
@@ -13,7 +26,7 @@ class HomeController extends Controller {
     let url = this.ctx.request.query['url']
     try {
       let podcast = await this.parserWithRequest(url)
-      if(podcast.episodes == null){
+      if(podcast.items == null){
         this.error('podcast can not parser')
         return
       }
@@ -58,16 +71,14 @@ class HomeController extends Controller {
   }
 
   ensureSortLatest(podcast){
-    if (podcast.items.length > 1){
+    if (util.isNullOrUndefined(podcast.items) && podcast.items.length > 1) {
       let episode = podcast.items[0];
       let second = podcast.items[1]
       let firstTime = moment(episode['isoDate'], moment.ISO_8601);
       let secondTime = moment(second['isoDate'], moment.ISO_8601);
       let diff = firstTime.diff(secondTime)
-      podcast.episodes = podcast.items
-      podcast.items = null
       if (diff < 0) {
-        podcast.episodes.reverse()
+        podcast.items.reverse()
       }
     }
     return podcast;
